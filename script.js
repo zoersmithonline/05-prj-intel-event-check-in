@@ -18,6 +18,7 @@ form.addEventListener("submit", function (event) {
     greeting.textContent = "Event is at full capacity!";
     greeting.className = "";
     greeting.style.display = "block";
+    greeting.className = "error-message";
     return;
   }
 
@@ -42,7 +43,6 @@ form.addEventListener("submit", function (event) {
   const teamCounter = document.getElementById(team + "Count");
   const currentTeamCount = parseInt(teamCounter.textContent) || 0;
   teamCounter.textContent = currentTeamCount + 1;
-  teamCounter.textContent = parseInt(teamCounter.textContent);
   
   //Show welcome message
   greeting.textContent = `Welcome, ${name} from ${teamName}!`;
