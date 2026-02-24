@@ -4,6 +4,9 @@ const teamSelect = document.getElementById("teamSelect");
 const attendeeCount = document.getElementById("attendeeCount");
 const progressBar = document.getElementById("progressBar");
 const greeting = document.getElementById("greeting");
+const attendeeList = document.getElementById("attendeeList");
+let attendees = [];
+const celebrationMessage = document.getElementById("celebrationMessage");
 
 //Track attencdance
 let count = 0;
@@ -16,9 +19,8 @@ form.addEventListener("submit", function (event) {
   //Stop if max capacity reached
   if (count >= maxCount) {
     greeting.textContent = "Event is at full capacity!";
-    greeting.className = "";
-    greeting.style.display = "block";
     greeting.className = "error-message";
+    greeting.style.display = "block";
     return;
   }
 
@@ -29,15 +31,58 @@ form.addEventListener("submit", function (event) {
 
   console.log(name, teamName);
 
+  // Prevent duplicate names
+  const duplicate = attendees.find(
+    (attendee) => attendee.name.toLowerCase() === name.toLowerCase()
+  );
+
+  if (duplicate) {
+    greeting.textContent = "This attendee has already checked in.";
+    greeting.className = "error-message";
+    greeting.style.display = "block";
+    return;
+  }
+
   //Increment count
   count++;
   attendeeCount.textContent = count;
   console.log("Total check-ins: ", count);
 
+  // Store attendee
+  attendees.push({ name, team: teamName });
+
+  // Create list item
+  const li = document.createElement("li");
+
+  li.innerHTML = `
+    <span>${name}</span>
+    <span class="attendee-team">${teamName}</span>
+  `;
+
+  attendeeList.appendChild(li);
+
   //Update progress bar
   const percentage = Math.round((count / maxCount) * 100);
   progressBar.style.width = percentage + "%";
   console.log(`Progress: ${percentage}`);
+
+  // If event is now full, determine winner
+  if (count === maxCount) {
+
+    const water = parseInt(document.getElementById("waterCount").textContent);
+    const zero = parseInt(document.getElementById("zeroCount").textContent);
+    const power = parseInt(document.getElementById("powerCount").textContent);
+
+    let winningTeam = "";
+    let highest = Math.max(water, zero, power);
+
+    if (water === highest) winningTeam = "Team Water Wise 🌊";
+    if (zero === highest) winningTeam = "Team Net Zero 🌿";
+    if (power === highest) winningTeam = "Team Renewables ⚡";
+
+    celebrationMessage.textContent = `🎉 Congratulations ${winningTeam}! You are the Sustainability Summit Champions!`;
+    celebrationMessage.classList.add("show");
+  }
 
   //Update team counter
   const teamCounter = document.getElementById(team + "Count");
